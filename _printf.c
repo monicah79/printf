@@ -17,8 +17,38 @@ int _printf(const char *format, ...)
 		if (*format == '%')
 		{
 			format++;
-			count++;
-			helper(format, count, args);
+			switch (*format)
+                        {
+                                case 'c':
+                                        count = handle_char(args, count);
+                                        break;
+                                case 's':
+                                        count = handle_string(args, count);
+                                        break;
+                                case 'd':
+                                case 'i':
+                                        count = handle_decimal(args, count);
+                                        break;
+                                case 'u':
+                                        count = handle_unsigned(args, count);
+                                        break;
+                                case 'o':
+                                        count = handle_octal(args, count);
+                                        break;
+                                case 'x':
+                                case 'X':
+                                        count = handle_hex(args, count, *format);
+                                        break;
+                                case 'p':
+                                        count = handle_pointer(args, count);
+                                        break;
+                                case '%':
+                                        count = handle_percent(count);
+                                        break;
+                                default:
+                                        count += printf("%%%c", *format);
+                                        break;
+                        }
 		} else
 		{
 		count += printf("%c", *format);
