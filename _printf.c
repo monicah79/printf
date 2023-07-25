@@ -1,65 +1,95 @@
-#include <stdlib.h>
+#include <stdio.h>
 #include <stdarg.h>
 #include "main.h"
-
 /**
- * _printf - produces output according to a format
- * @format: character string
- * Return: number of characters printed excluding null byte
+ * _printf - Printf function
+ * @format: array of characters
+ * Return: Always 0
  */
 int _printf(const char *format, ...)
 {
-	va_list arg;
-	unsigned int i, j, flag;
-	unsigned int len = 0;
-
-	print_t print[] = {
-		{"c", p_char}, {"s", p_str}, {"d", p_dec}, {"i", p_int},
-		{NULL, NULL}
-	};
-
-	va_start(arg, format);
-
-	if (format == NULL || (format[0] == '%' && format[1] == '\0'))
-		return (0);
-
-	i = 0;
-	while (format[i] != '\0')
+	
+	int lp = 0;
+	int i;
+	va_list args;
+	va_start(args, format);
+	if (format == NULL)
 	{
-		if (format[i] == '%' && format[i + 1] != '%')
-		{
-			j = 0;
-			flag = 0;
-			while (print[j].p != NULL)
-			{
-				if (format[i + 1] == print[j].print[0])
-				{
-					len = len + print[j].p(arg);
-					flag = 1;
-					i++;
-				}
-				j++;
-			}
-			if (flag == 0)
-			{
-				_putchar(format[i]);
-				len = len + 1;
-			}
-		}
-		else if (format[i] == '%' && format[i + 1] == '%')
-		{
-			_putchar('%');
-			i++;
-			len = len + 1;
-		}
-		else
-		{
-			_putchar(format[i]);
-			len = len + 1;
-		}
-		i++;
+		return (-1);
 	}
-	va_end(arg);
+	while (*format)
+	{
+		if (*format == '%')
+		{
+			format++;
+			if (!*format) 
+			{
 
-	return (len);
+        			return -1;
+			}
+			switch (*format)
+			{
+				case 'c':
+					lp += printf("%c", va_arg(args, int));
+					break;
+				case 's':
+					lp += printf("%s", va_arg(args, char *));
+					break;
+				case 'd':
+				case 'i':
+					lp += printf("%d", va_arg(args, int));
+					break;
+				case 'u':
+					lp += printf("%u", va_arg(args, unsigned int));
+					break;
+				case 'o':
+					lp += printf("%o", va_arg(args, unsigned int));
+					break;
+				case 'x':
+					lp += printf("%x", va_arg(args, int *));
+					break;
+				case 'X':
+					lp += printf("%X", va_arg(args, int *));
+					break;
+				case 'p':
+					lp += printf("%p", va_arg(args, void *));
+					break;
+				case 'b':
+					{
+					unsigned int num = va_arg(args, unsigned int);
+					char buffer[32];
+					int index = 0;
+					if (num == 0) {
+					return printf("0");
+					}
+					else 
+					{
+						while (num > 0)
+						{
+							buffer[index++] = num % 2;
+							num /= 2;
+						}
+							for (i = index - 1; i >= 0; i--)
+							{
+								printf("%d", buffer[i]);
+							}
+					}
+						break;
+					}
+				case '%':
+					lp += printf("%%");
+					break;
+				default:
+					lp += printf("%%%c", *format);
+					break;
+			}
+			}
+			else 
+			{
+				lp += printf("%c", *format);
+			}
+		format++;
+	}
+	va_end(args);
+	return (lp);
 }
