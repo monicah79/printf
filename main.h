@@ -11,5 +11,5 @@ int handle_octal(va_list args, int count);
 int handle_hex(va_list args, int count, char format);
 int handle_pointer(va_list args, int count);
 int handle_percent(int count);
-
+char *convert_to_binary(unsigned int num);
 #endif 
