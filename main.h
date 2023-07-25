@@ -2,14 +2,24 @@
 #define MAIN_H
 
 #include <stdarg.h>
+
+/**
+ * struct print - struct for conversion specifiers
+ * @print: struct print
+ * @p: print function specified
+ */
+typedef struct print
+{
+	char *print;
+	int (*p)();
+} print_t;
+
 int _printf(const char *format, ...);
-int handle_char(va_list args, int count);
-int handle_string(va_list args, int count);
-int handle_decimal(va_list args, int count);
-int handle_unsigned(va_list args, unsigned int count);
-int handle_octal(va_list args, int count);
-int handle_hex(va_list args, int count, char format);
-int handle_pointer(va_list args, int count);
-int handle_percent(int count);
-char *convert_to_binary(unsigned int num);
-#endif 
+int _putchar(char c);
+
+int p_char(va_list arg);
+int p_str(va_list arg);
+int p_dec(va_list arg);
+int p_int(va_list arg);
+
+#endif

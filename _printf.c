@@ -1,60 +1,65 @@
+#include <stdlib.h>
 #include <stdarg.h>
-#include <stdio.h>
-#include "main.h"
+#include "holberton.h"
+
 /**
- * _printf - Entry point
- *@format: print char
- * Return: Always 0
+ * _printf - produces output according to a format
+ * @format: character string
+ * Return: number of characters printed excluding null byte
  */
 int _printf(const char *format, ...)
 {
-	int count = 0;
-	va_list args;
+	va_list arg;
+	unsigned int i, j, flag;
+	unsigned int len = 0;
 
-	va_start(args, format);
-	while (*format)
+	print_t print[] = {
+		{"c", p_char}, {"s", p_str}, {"d", p_dec}, {"i", p_int},
+		{NULL, NULL}
+	};
+
+	va_start(arg, format);
+
+	if (format == NULL || (format[0] == '%' && format[1] == '\0'))
+		return (0);
+
+	i = 0;
+	while (format[i] != '\0')
 	{
-		if (*format == '%')
+		if (format[i] == '%' && format[i + 1] != '%')
 		{
-			format++;
-			switch (*format)
-                        {
-                                case 'c':
-                                        count = handle_char(args, count);
-                                        break;
-                                case 's':
-                                        count = handle_string(args, count);
-                                        break;
-                                case 'd':
-                                case 'i':
-                                        count = handle_decimal(args, count);
-                                        break;
-                                case 'u':
-                                        count = handle_unsigned(args, count);
-                                        break;
-                                case 'o':
-                                        count = handle_octal(args, count);
-                                        break;
-                                case 'x':
-                                case 'X':
-                                        count = handle_hex(args, count, *format);
-                                        break;
-                                case 'p':
-                                        count = handle_pointer(args, count);
-                                        break;
-                                case '%':
-                                        count = handle_percent(count);
-                                        break;
-                                default:
-                                        count += printf("%%%c", *format);
-                                        break;
-                        }
-		} else
-		{
-		count += printf("%c", *format);
+			j = 0;
+			flag = 0;
+			while (print[j].p != NULL)
+			{
+				if (format[i + 1] == print[j].print[0])
+				{
+					len = len + print[j].p(arg);
+					flag = 1;
+					i++;
+				}
+				j++;
+			}
+			if (flag == 0)
+			{
+				_putchar(format[i]);
+				len = len + 1;
+			}
 		}
-		format++;
+		else if (format[i] == '%' && format[i + 1] == '%')
+		{
+			_putchar('%');
+			i++;
+			len = len + 1;
+		}
+		else
+		{
+			_putchar(format[i]);
+			len = len + 1;
+		}
+		i++;
 	}
-	va_end(args);
-	return (count);
+	va_end(arg);
+
+	return (len);
 }
